@@ -28,7 +28,12 @@ namespace GameDataParser
                 Console.WriteLine("Enter the name of the file you want to read:");
                 string userInput = Console.ReadLine();
 
-                if(userInput is null)
+                if(File.Exists(userInput))
+                {
+                    JsonDeserializer(userInput);
+                    isInputValid = true;
+                }
+                else if(userInput is null)
                 {
                     Console.WriteLine("File name cannot be null.");
                 }
@@ -40,11 +45,6 @@ namespace GameDataParser
                 {
                     Console.WriteLine("File not found.");
                 }
-                else if(File.Exists(userInput))
-                {
-                    JsonDeserializer(userInput);
-                    isInputValid = true;
-                }
             }
             while (!isInputValid);
         }
@@ -52,9 +52,20 @@ namespace GameDataParser
         private void JsonDeserializer(string fileName)
         {
             string jsonString = File.ReadAllText(fileName);
-            var jsonGames = JsonSerializer.Deserialize<List<Game>>(jsonString);
+            try
+            {
+                var jsonGames = JsonSerializer.Deserialize<List<Game>>(jsonString);
+                printer.PrintGames(jsonGames);
+            }
+            catch(JsonException ex)
+            {
+                Console.WriteLine($"JSON in {fileName} was not in a valid format. JSON body:");
+                Console.WriteLine(jsonString);
+                Console.WriteLine();
+                Console.WriteLine("Sorry! The application has experienced an unexpected error and will have to be closed.");
 
-            printer.PrintGames(jsonGames);
+                Logger.Log(ex);
+            }
         }
     }
 }
