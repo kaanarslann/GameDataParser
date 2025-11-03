@@ -59,8 +59,10 @@ namespace GameDataParser
             }
             catch(JsonException ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"JSON in {fileName} was not in a valid format. JSON body:");
                 Console.WriteLine(jsonString);
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine();
                 Console.WriteLine("Sorry! The application has experienced an unexpected error and will have to be closed.");
 
